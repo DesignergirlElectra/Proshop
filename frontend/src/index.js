@@ -6,11 +6,13 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Route, RouterProvider,createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 import HomeScreen from './Screens/HomeScreen';
+import ProductScreen from './Screens/ProductScreen';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App/>}>
       <Route index={true} path = '/' element={<HomeScreen/>}/>
+      <Route path = '/product/:id' element={<ProductScreen/>}/>
     </Route>
   )
 )

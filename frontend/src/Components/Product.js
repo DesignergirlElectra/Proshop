@@ -1,8 +1,11 @@
 import React from 'react'
 import { Card } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import Rating from './Rating'
+// import Rating from './Rating'
 
 const Product = ({ products }) => {
+    console.log(products.rating)
     return (
         <Card className='my-3 p-3 rounded'>
             <Link to ={`/product/${products._id}`}>
@@ -14,10 +17,15 @@ const Product = ({ products }) => {
                         <strong>{products.name}</strong>
                     </Card.Title>
                 </Link>
-            </Card.Body>
+                <Card.Text  as= 'div'>
+                <Rating value={products.rating} text= { `${products.numReviews} reviews` } />
+                {/* <Rating value = {products.rating} text = {`${products.numReviews} reviews`}/> */}
+            </Card.Text>
             <Card.Text as = 'h3'>
                 ${products.price}
             </Card.Text>
+            </Card.Body>
+            
         </Card>
     )
 }
