@@ -5,7 +5,6 @@ import Rating from './Rating'
 // import Rating from './Rating'
 
 const Product = ({ products }) => {
-    console.log(products.rating)
     return (
         <Card className='my-3 p-3 rounded'>
             <Link to ={`/product/${products._id}`}>
