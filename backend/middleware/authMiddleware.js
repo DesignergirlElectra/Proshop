@@ -1,35 +1,32 @@
 import jwt from 'jsonwebtoken';
-import asyncHandler from 'express-async-handler';
+import asyncHandler from './asyncHandler.js';
 import User from '../models/userModel.js'; // Adjust the import path if needed
 
 // Protect middleware
 const protect = asyncHandler(async (req, res, next) => {
-    let token = req.cookies.token;
-
+    let token = req.cookies.jwt;
     if (token) {
         try {
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            console.log('Decoded JWT:', decoded);
+            // console.log('Decoded JWT:', decoded); this can be used to verify the token is valid or not
 
-            req.user = await User.findById(decoded.user_Id).select('-password');
+            req.user = await User.findById(decoded.userId).select('-password');
+            if (!req.user) {
+                throw new Error('User not found');
+            }
             next(); // Proceed to the next middleware if the token is valid
         } catch (error) {
-            // Log the error to identify where it might be occurring
             console.error('Error in protect middleware:', error.message);
 
-            // Check if headers are already sent
             if (!res.headersSent) {
-                res.status(401);
-                return next(new Error('Not Authorized, token failed')); // Properly pass the error
+                res.status(401).json({ message: 'Not Authorized, token failed' });
             } else {
                 console.error('Headers already sent in protect middleware');
             }
         }
     } else {
-        // Check if headers are already sent
         if (!res.headersSent) {
-            res.status(401);
-            return next(new Error('Not Authorized, no token')); // Properly pass the error
+            res.status(401).json({ message: 'Not Authorized, no token' });
         } else {
             console.error('Headers already sent in protect middleware');
         }
@@ -39,15 +36,13 @@ const protect = asyncHandler(async (req, res, next) => {
 // Admin middleware
 const admin = (req, res, next) => {
     if (req.user && req.user.isAdmin) {
-        return next(); // User is admin, proceed
-    }
-
-    // Check if headers are already sent
-    if (!res.headersSent) {
-        res.status(401);
-        return next(new Error('Not Authorized as valid admin')); // Properly pass the error
+        next(); // User is admin, proceed
     } else {
-        console.error('Headers already sent in admin middleware');
+        if (!res.headersSent) {
+            res.status(401).json({ message: 'Not Authorized as valid admin' });
+        } else {
+            console.error('Headers already sent in admin middleware');
+        }
     }
 };
 

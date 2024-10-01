@@ -6,6 +6,7 @@ import userRoutes from './routes/userRoutes.js'
 import { notFound , errorHandler } from './middleware/error.Middleware.js';
 import cookieParser from 'cookie-parser';
 import {protect, admin} from "./middleware/authMiddleware.js"
+import orderRoutes from './routes/orderRoutes.js'
 
 dotenv.config();
 connectDB(); // connect to database
@@ -30,6 +31,7 @@ app.get('/test', protect, admin, (req, res) => {
 
 app.use('/api/products',productRoutes)
 app.use('/api/users',userRoutes)
+app.use('/api/orders',orderRoutes)
 
 app.use(notFound)
 app.use(errorHandler)
