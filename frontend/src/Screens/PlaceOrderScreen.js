@@ -1,20 +1,22 @@
 import React, { useEffect } from 'react'
-import { Button, Col, Row, ListGroup, Image, Card } from 'react-bootstrap'
+import { Button, Col, Row, ListGroup, Image } from 'react-bootstrap'
 import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { CheckoutStep } from '../Components/CheckoutStep'
 import Message from '../Components/Message'
 // import { useOrderCreateMutation } from '../Slices/orderApiSlice'
-// import toast from 'react-toastify' // Uncomment if using toast
 // import Loader from '../Components/Loader' // Uncomment if using Loader
+import {toast} from "react-toastify"
 import { Link } from 'react-router-dom'
 import { useCreateOrderMutation } from '../Slices/orderApiSlice'
+import { clearCartItems } from '../Slices/cartSlice'
 
 const PlaceOrderScreen = () => {
     const navigate = useNavigate()
+    const dispatch = useDispatch()
     const cart = useSelector((state) => state.cart)
     const [createOrder, { isLoading, error }] = useCreateOrderMutation()
-
+    // console.log(cart.shippingAddress)
     useEffect(() => {
         if (!cart.shippingAddress.address) {
             navigate('/shipping')
@@ -35,12 +37,12 @@ const PlaceOrderScreen = () => {
                 taxPrice: cart.taxPrice,
                 totalPrice: cart.totalPrice
             }).unwrap()
-
+            dispatch(clearCartItems())
             // Optional: Redirect to order confirmation
-            navigate(`/orders/${res._id}`)
+            navigate(`/order/${res._id}`)
         } catch (error) {
             // Display error
-            // toast.error(error?.data?.message || error.error); // Uncomment if using toast
+            toast.error(error?.data?.message || error.error); // Uncomment if using toast
         }
     }
 

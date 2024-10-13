@@ -17,7 +17,7 @@ const orderSchema = new mongoose.Schema({
             ref: "Product"
         }
     }],
-    shippinAddress: {
+    shippingAddress: {
         address: {
             type: String,
             required: true,
@@ -26,7 +26,7 @@ const orderSchema = new mongoose.Schema({
             type: String,
             required: true,
         },
-        postalcode: {
+        postal_code: {
             type: String,
             required: true,
         },
@@ -35,7 +35,7 @@ const orderSchema = new mongoose.Schema({
             required: true,
         },
     },
-    paymentMethods: {
+    paymentMethod: {
         type: String,
         required: true,
     },

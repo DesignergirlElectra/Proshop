@@ -9,8 +9,8 @@ const addOrderItems = asyncHandler(async(req,res) => {
     // res.send('add order items')
     const {
         orderItems,
-        shippinAddress,
-        paymentMethods,
+        shippingAddress,
+        paymentMethod,
         paymentResults,
         itemsPrice,
         taxPrice,
@@ -31,14 +31,15 @@ const addOrderItems = asyncHandler(async(req,res) => {
                 }
             )),
             user : req.user._id,
-            shippinAddress,
-            paymentMethods,
+            shippingAddress,
+            paymentMethod,
             paymentResults,
             itemsPrice,
             taxPrice,
             shippingPrice,
             totalPrice
         })
+        console.log(shippingAddress)
         const createdOrder = await order.save();
         res.status(201).json(createdOrder)
     }
@@ -71,11 +72,27 @@ const getOrderById = asyncHandler(async(req,res) => {
 })
 
 // @desc update order to paid
-// @route get api/orders/:id/pay
+// @route POST api/orders/:id/pay
 // @access privatre
 
 const updateOrderById = asyncHandler(async(req,res) => {
-    res.send('Update order to paid')
+    // res.send('Update order to paid')
+    const order = await Order.findById(res.params.id)
+    if(order){
+        order.isPaid = true;
+        order.paidAt = Date.now()
+        order.paymentResults = {
+            id : req.body.id,
+            status : req.body.status,
+            update_time : req.body.update_time,
+            email_address : req.body.email_address
+        };
+        const updatedOrder =  await order.save()
+        res.status(200).json(updatedOrder)
+    }else{
+        res.status(404);
+        throw new error('order not updated') 
+    }
 })
 
 // @desc update order to delivered

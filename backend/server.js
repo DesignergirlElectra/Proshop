@@ -33,6 +33,17 @@ app.use('/api/products',productRoutes)
 app.use('/api/users',userRoutes)
 app.use('/api/orders',orderRoutes)
 
+app.get('/api/config/paypal', (req, res) => {
+    const clientId = process.env.PAYPAL_CLIENT_ID;
+    if (!clientId) {
+      console.error("PAYPAL_CLIENT_ID is not defined.");
+      return res.status(500).json({ message: 'PAYPAL_CLIENT_ID is not defined' });
+    }
+    console.log("Client ID: ", clientId); // This should log your client ID
+    res.send({ clientId });
+  });
+  
+
 app.use(notFound)
 app.use(errorHandler)
 
