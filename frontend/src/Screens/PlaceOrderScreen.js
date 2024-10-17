@@ -39,7 +39,7 @@ const PlaceOrderScreen = () => {
             }).unwrap()
             dispatch(clearCartItems())
             // Optional: Redirect to order confirmation
-            navigate(`/order/${res._id}`)
+            navigate(`/orders/${res._id}`)
         } catch (error) {
             // Display error
             toast.error(error?.data?.message || error.error); // Uncomment if using toast

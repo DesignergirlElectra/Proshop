@@ -15,7 +15,7 @@ const OrderScreen = () => {
 
     const [payOrder,{ isLoading: loadingPay }] = usePayOrderMutation();
     const { data: paypal, isLoading: loadingPayPal, error: errorPayPal, } = useGetPayPalClientIdQuery();
-    // console.log(payOrder,paypal)
+    
     const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
     useEffect(() => {
@@ -34,7 +34,7 @@ const OrderScreen = () => {
             loadPayPalScript();
         }
     }, [order, paypal, paypalDispatch, errorPayPal, loadingPay]);
-
+    console.log(order)
     function onApprove(data , actions) {
         return actions.order.capture().then(async function(details){
             try{
@@ -181,9 +181,9 @@ const OrderScreen = () => {
                                                 <Loader />
                                             ) : (
                                                 <div>
-                                                    <Button onClick={onApproveTest} style={{ marginBottom: '10px' }}>
+                                                    {/* <Button onClick={onApproveTest} style={{ marginBottom: '10px' }}>
                                                         Test Pay order
-                                                    </Button>
+                                                    </Button> */}
                                                     <div>
                                                         <PayPalButtons
                                                             createOrder={createOrder}

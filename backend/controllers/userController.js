@@ -103,7 +103,7 @@ const updateUserProfile = asyncHandler(async(req,res) => {
         })
 
 const updateUser= asyncHandler(async(req,res) => {
-    res.send('Update user ');
+    res.send({message :'Update user'});
 })
 
 const getUsers = asyncHandler(async(req,res) => {
