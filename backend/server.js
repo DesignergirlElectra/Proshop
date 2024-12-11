@@ -8,10 +8,14 @@ import cookieParser from 'cookie-parser';
 import {protect, admin} from "./middleware/authMiddleware.js"
 import orderRoutes from './routes/orderRoutes.js'
 
+
+
 dotenv.config();
 connectDB(); // connect to database
 const port = process.env.PORT || 5000;
+// const cors = require('cors');
 const app = express();
+
 
 
 // pharse error remove 

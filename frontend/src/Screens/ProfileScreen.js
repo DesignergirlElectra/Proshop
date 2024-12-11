@@ -8,6 +8,8 @@ import Loader from '../Components/Loader';
 import Message from '../Components/Message';
 import { useProfileMutation } from '../Slices/usersApiSlice';
 import { setCredentials } from '../Slices/authSlice';
+import { useGetMyOrdersQuery } from '../Slices/orderApiSlice';
+import { FaTimes } from 'react-icons/fa';
 
 
 const ProfileScreen = () => {
@@ -20,6 +22,7 @@ const ProfileScreen = () => {
     const {userInfo} = useSelector((state) => state.auth);
 
     const [updateProfile , {isLoading : loadingUpdateProfile} ] = useProfileMutation()
+    const { data: orders, isLoading, error } = useGetMyOrdersQuery()
 
     useEffect(()=>{
         if(userInfo){
@@ -34,9 +37,9 @@ const ProfileScreen = () => {
             toast.error('password not match')
         }else{
             try{
-                console.log(loadingUpdateProfile)
+                
                 const res = await updateProfile({_id:userInfo.id , name , email , password})
-                console.log('res',res)
+                // console.log('res',res)
                 dispatch(setCredentials(res))
                 toast.success('profile update successfully')
             }
@@ -45,6 +48,7 @@ const ProfileScreen = () => {
             }
         }
     }
+    console.log(orders)
 
   return (
     <Row>
@@ -95,7 +99,56 @@ const ProfileScreen = () => {
                 {loadingUpdateProfile && <Loader/>}
             </Form>
         </Col>
-        <Col md = {9} >Column2</Col>
+        <Col md = {9} >
+            <h5>Orders</h5>
+            { isLoading ? <Loader/> : error ? <Message variant='danger'>
+                {error?.data.message || error.error}
+            </Message>:(
+                <Table striped hover responsive className='table-sm'>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>DATE</th>
+                            <th>TOTAL</th>
+                            <th>PAID</th>
+                            <th>DELIVERED</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {orders.map((order)=>{
+                            return <tr key = {order._id}>
+                                <td>{order._id}</td>
+                                <td>{order.createdAt.substring(0,10)}</td>
+                                <td>${order.totalPrice}</td>
+                                <td>{order.isPaid ? (
+                                        order.paidAt.substring(0,10)
+                                    ) : (
+                                        <FaTimes style={{color:'red'}}/>
+                                    )}
+                                </td>
+                                <td>{order.isDelivered ? (
+                                        order.deliveredAt.substring(0,10)
+                                    ) : (
+                                        <FaTimes style={{color:'red'}}/>
+                                    )}
+                                </td>
+                                <td>
+                                    <LinkContainer to = {`/order/${order._id}`}>
+                                        <Button className='btn-sm' variant = 'dark'>
+                                            Details
+                                        </Button>
+                                    </LinkContainer>
+                                </td>
+                                <td></td>
+                            </tr>
+                        })
+
+                        }
+                    </tbody>
+                </Table>
+            )}
+        </Col>
     </Row>
   )
 }

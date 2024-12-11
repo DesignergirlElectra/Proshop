@@ -30,7 +30,7 @@ const addOrderItems = asyncHandler(async(req,res) => {
                     _id : undefined
                 }
             )),
-            user : req.user._id,
+            user : req.user,
             shippingAddress,
             paymentMethod,
             paymentResults,
@@ -39,7 +39,6 @@ const addOrderItems = asyncHandler(async(req,res) => {
             shippingPrice,
             totalPrice
         })
-        console.log(shippingAddress)
         const createdOrder = await order.save();
         res.status(201).json(createdOrder)
     }
@@ -53,7 +52,7 @@ const addOrderItems = asyncHandler(async(req,res) => {
 const getMyOrders = asyncHandler(async(req,res) => {
     // res.send('get My order')
     const orders = await Order.find({user: req.user._id})
-    req.status(200).json(orders)
+    res.status(200).json(orders)
 })
 
 // @desc get order by id
@@ -91,7 +90,7 @@ const updateOrderById = asyncHandler(async(req,res) => {
         res.status(200).json(updatedOrder)
     }else{
         res.status(404);
-        throw new error('order not updated') 
+        throw new Error('order not updated') 
     }
 })
 
@@ -99,17 +98,27 @@ const updateOrderById = asyncHandler(async(req,res) => {
 // @route get api/orders/:id/deliver
 // @access privatre/admin
 
-const updateOrderToBeDeliver= asyncHandler(async(req,res) => {
-    res.send('update order delivered')
+const updateOrderToDelivered= asyncHandler(async(req,res) => {
+    const order = await Order.findById(req.params.id)
+    console.log(Date.now())
+    if(order){
+        order.isDelivered = true;
+        order.deliveredAt = Date.now()
+        const updatedOrder =  await order.save()
+        res.status(200).json(updatedOrder)
+    }else{
+        res.status(404);
+        throw new error('order not FOUND') 
+    }
 })
 
 // @desc get all orders
 // @route get api/orders
-// @access privatre/admin
+// @access private/admin
 
 const getOrder = asyncHandler(async(req,res) => {
     res.send('Get All Order')
 })
 
 
-export { addOrderItems,getMyOrders,getOrderById,updateOrderById,updateOrderToBeDeliver,getOrder}
+export { addOrderItems,getMyOrders,getOrderById,updateOrderById,updateOrderToDelivered ,getOrder}
