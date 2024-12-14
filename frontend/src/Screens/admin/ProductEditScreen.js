@@ -7,20 +7,22 @@ import { FaTimes, FaEdit, FaTrash } from 'react-icons/fa'
 import Message from '../../Components/Message'
 import Loader from '../../Components/Loader'
 import { toast } from "react-toastify"
-import { useUpdateProductMutation, useGetProductDetailsQuery, useGetProductsQuery } from '../../Slices/productsApiSlice'
+import { useUpdateProductMutation, useGetProductDetailsQuery, useGetProductsQuery, useUploadProductImageMutation } from '../../Slices/productsApiSlice'
 import FormContainer from '../../Components/FormContainer'
 
 const ProductEditScreen = () => {
     const { id: productId } = useParams();
-    const [name, setName ] = useState('')
-    const [image, setImage ] = useState('')
-    const [ price, setPrice ] = useState(0)
-    const [ brand, setBrand ] = useState('')
-    const [ description, setDescription ] = useState('')
-    const [ countInStock, setCountInStock ] = useState(0)
-    const [ category, setCategory ] = useState('')
+    const [name, setName] = useState('')
+    const [image, setImage] = useState('')
+    const [price, setPrice] = useState(0)
+    const [brand, setBrand] = useState('')
+    const [description, setDescription] = useState('')
+    const [countInStock, setCountInStock] = useState(0)
+    const [category, setCategory] = useState('')
+
     const { data: product, isLoading, error, refetch } = useGetProductDetailsQuery(productId)
     const [updateProduct, { isLoading: loadingUpdate }] = useUpdateProductMutation()
+    const [uploadProductImage, { isLoading: loadingUpload }] = useUploadProductImageMutation()
     const navigate = useNavigate()
     useEffect(() => {
         if (product) {
@@ -32,30 +34,43 @@ const ProductEditScreen = () => {
             setCategory(product.category)
             setCountInStock(product.countInStock);
         }
-    }, [product, setName, setBrand, setCategory, setPrice,setDescription,setCountInStock, setImage])
+    }, [product, setName, setBrand, setCategory, setPrice, setDescription, setCountInStock, setImage])
 
-    const submitHandler = async (e)=>{
+    const submitHandler = async (e) => {
         e.preventDefault()
         const updatedProduct = {
-           productId,
-           name,
-           price,
-           brand,
-           image,
-           description,
-           category,
-           countInStock, 
+            productId,
+            name,
+            price,
+            brand,
+            image,
+            description,
+            category,
+            countInStock,
         }
         console.log(updatedProduct, updatedProduct.productId)
         const result = await updateProduct(updatedProduct);
-            if (result.error){
-                toast.error(result.error);
-            }
-            else{
-                toast.success('product data updated');
-                // refetch()
-                navigate('/admin/productList')
-            }
+        if (result.error) {
+            toast.error(result.error);
+        }
+        else {
+            toast.success('product data updated');
+            // refetch()
+            navigate('/admin/productList')
+        }
+    }
+
+    const uploadFileHandler = async (e) => {
+        const formData = new FormData();
+        formData.append('image',e.target.files[0]);
+        try {
+            const res = await uploadProductImage(formData).unwrap();
+            console.log(res)
+            toast.success(res.message);
+            setImage(res.image);
+        } catch (err) {
+            toast.error(err?.data?.message || err.error)
+        } 
     }
     return (
         <>
@@ -65,60 +80,72 @@ const ProductEditScreen = () => {
                 {loadingUpdate && <Loader />}
                 {isLoading ? <Loader /> : error ? <Message variant='danger'>{error}</Message> : (<Form onSubmit={submitHandler}>
                     <Form.Group>
-                        <Form.Label controlId = 'name'> Name</Form.Label>
-                        <Form.Control type = 'text'
+                        <Form.Label controlId='name'> Name</Form.Label>
+                        <Form.Control type='text'
                             placeholder='Enter Name'
-                           value = {name}
-                           onChange={(e)=>{setName(e.target.value)}}
+                            value={name}
+                            onChange={(e) => { setName(e.target.value) }}
                         ></Form.Control>
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label controlId = 'price'> Price </Form.Label>
-                        <Form.Control type = 'number'
+                        <Form.Label controlId='price'> Price </Form.Label>
+                        <Form.Control type='number'
                             placeholder='price'
-                           value = {price}
-                           onChange={(e)=>{setPrice(e.target.value)}}
+                            value={price}
+                            onChange={(e) => { setPrice(e.target.value) }}
                         ></Form.Control>
                     </Form.Group>
 
-                    {/* <IMAGE INPUT Placeolder */}
                     <Form.Group>
-                        <Form.Label controlId = 'brand'> Brand </Form.Label>
-                        <Form.Control type = 'text'
+                        <Form.Label controlId='image'> Image </Form.Label>
+                        <Form.Control type='text'
+                            placeholder='enter image url'
+                            value={image}
+                            onChange={(e) => setImage }
+                        ></Form.Control>
+                        <Form.Control type='file'
+                            label='choose file'
+                            onChange={uploadFileHandler}
+                        ></Form.Control>
+                    </Form.Group>
+
+                    <Form.Group>
+                        <Form.Label controlId='brand'> Brand </Form.Label>
+                        <Form.Control type='text'
                             placeholder='Enter brand'
-                           value = {brand}
-                           onChange={(e)=>{setBrand(e.target.value)}}
+                            value={brand}
+                            onChange={(e) => { setBrand(e.target.value) }}
                         ></Form.Control>
                     </Form.Group>
 
                     <Form.Group>
-                        <Form.Label controlId = 'countInStock'> Count In Stock </Form.Label>
-                        <Form.Control type = 'number'
+                        <Form.Label controlId='countInStock'> Count In Stock </Form.Label>
+                        <Form.Control type='number'
                             placeholder='countInStock'
-                           value = {countInStock}
-                           onChange={(e)=>{setCountInStock(e.target.value)}}
+                            value={countInStock}
+                            onChange={(e) => { setCountInStock(e.target.value) }}
                         ></Form.Control>
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label controlId = 'category'> Category </Form.Label>
-                        <Form.Control type = 'text'
+                        <Form.Label controlId='category'> Category </Form.Label>
+                        <Form.Control type='text'
                             placeholder='category'
-                           value = {category}
-                           onChange={(e)=>{setCategory(e.target.value)}}
+                            value={category}
+                            onChange={(e) => { setCategory(e.target.value) }}
                         ></Form.Control>
                     </Form.Group>
                     <Form.Group>
-                        <Form.Label controlId = 'description'> Description</Form.Label>
-                        <Form.Control type = 'text'
+                        <Form.Label controlId='description'> Description</Form.Label>
+                        <Form.Control type='text'
                             placeholder='description'
-                           value = {description}
-                           onChange={(e)=>{setDescription(e.target.value)}}
+                            value={description}
+                            onChange={(e) => { setDescription(e.target.value) }}
                         ></Form.Control>
                     </Form.Group>
                     <Button type='submit' variant='primary' className='my-2'>Update</Button>
                 </Form>)}
 
-                
+
             </FormContainer>
         </>
     )

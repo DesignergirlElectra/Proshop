@@ -1,3 +1,4 @@
+import path from 'path'
 import express from 'express';
 import dotenv from 'dotenv'
 import connectDB from './config/db.js';
@@ -7,6 +8,7 @@ import { notFound , errorHandler } from './middleware/error.Middleware.js';
 import cookieParser from 'cookie-parser';
 import {protect, admin} from "./middleware/authMiddleware.js"
 import orderRoutes from './routes/orderRoutes.js'
+import uploadRoutes from './routes/uploadRoutes.js'
 
 
 
@@ -36,6 +38,7 @@ app.get('/test', protect, admin, (req, res) => {
 app.use('/api/products',productRoutes)
 app.use('/api/users',userRoutes)
 app.use('/api/orders',orderRoutes)
+app.use('/api/upload',uploadRoutes)
 
 app.get('/api/config/paypal', (req, res) => {
     const clientId = process.env.PAYPAL_CLIENT_ID;
@@ -46,7 +49,10 @@ app.get('/api/config/paypal', (req, res) => {
     console.log("Client ID: ", clientId); // This should log your client ID
     res.send({ clientId });
   });
-  
+
+const __dirname = path.resolve() //set __dirname to current directory
+app.use('/uploads', express.static(path.join(__dirname,'/uploads')))  
+
 
 app.use(notFound)
 app.use(errorHandler)
