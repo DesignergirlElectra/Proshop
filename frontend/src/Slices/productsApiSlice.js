@@ -39,10 +39,16 @@ export const productsApiSlice = apiSlice.injectEndpoints({
           body : data
         }),
        invalidatesTags: ['Products'] // Keep unused data for 5 seconds
+      }),
+      deleteProduct : builder.mutation({
+        query : (productId) =>  ({
+          url: `${PRODUCTS_URL}/${productId}`,
+          method: 'DELETE',
+        })
       })
     }),
      // Add this line to prevent endpoint overriding issues
   });
   
   export const { useGetProductsQuery, useGetProductDetailsQuery, useCreateProductMutation ,
-    useUpdateProductMutation, useUploadProductImageMutation} = productsApiSlice;
+    useUpdateProductMutation, useUploadProductImageMutation , useDeleteProductMutation} = productsApiSlice;
