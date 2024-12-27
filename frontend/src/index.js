@@ -22,13 +22,17 @@ import OrderListScreen from './Screens/admin/OrderListScreen';
 import AdminRoute from './Components/AdiminRoute';
 import ProductListScreen from './Screens/admin/ProductListScreen';
 import ProductEditScreen from './Screens/admin/ProductEditScreen';
-import  UsersListScreen  from './Screens/admin/UsersListScreen';
-import UserEditSceern  from './Screens/admin/UserEditScreen';
+import UsersListScreen from './Screens/admin/UsersListScreen';
+import UserEditSceern from './Screens/admin/UserEditScreen';
+import { HelmetProvider } from 'react-helmet-async';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
       <Route index={true} path='/' element={<HomeScreen />} />
+      <Route path='/search/:keyword' element={<HomeScreen />} />
+      <Route path='/page/:pageNumber' element={<HomeScreen />} />
+      <Route path='/search/:keyword/page/:pageNumber' element={<HomeScreen />} />
       <Route path='/product/:id' element={<ProductScreen />} />
       <Route path='/cart' element={<CartScreen />} />
       <Route path='/login' element={<LoginScreen />} />
@@ -38,14 +42,16 @@ const router = createBrowserRouter(
         <Route path='/payment' element={<PaymentScreen />} />
         <Route path='/placeorder' element={<PlaceOrderScreen />} />
         <Route path='/orders/:id' element={<OrderScreen />} />
-        <Route path='/profile' element={<ProfileScreen/>} />
+        <Route path='/profile' element={<ProfileScreen />} />
+
       </Route>
-      <Route element={<AdminRoute/>}>
-        <Route path='/admin/orderList' element={<OrderListScreen/>} />
-        <Route path='/admin/productList' element={<ProductListScreen/>}/>
-        <Route path='/admin/productList/:id/edit' element={<ProductEditScreen/>}/>
-        <Route path='/admin/userList' element = {<UsersListScreen/>}/>
-        <Route path='/admin/user/:id/edit' element = {<UserEditSceern/>}/>
+      <Route element={<AdminRoute />}>
+        <Route path='/admin/orderList' element={<OrderListScreen />} />
+        <Route path='/admin/productList' element={<ProductListScreen />} />
+        <Route path='/admin/productList/:pageNumber' element={<ProductListScreen />} />
+        <Route path='/admin/productList/:id/edit' element={<ProductEditScreen />} />
+        <Route path='/admin/userList' element={<UsersListScreen />} />
+        <Route path='/admin/user/:id/edit' element={<UserEditSceern />} />
       </Route>
     </Route>
   )
@@ -54,11 +60,13 @@ const router = createBrowserRouter(
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <PayPalScriptProvider deferLoading={true}>
-        <RouterProvider router={router} />
-      </PayPalScriptProvider>
-    </Provider>
+    <HelmetProvider>
+      <Provider store={store}>
+        <PayPalScriptProvider deferLoading={true}>
+          <RouterProvider router={router} />
+        </PayPalScriptProvider>
+      </Provider>
+    </HelmetProvider>
   </React.StrictMode>
 );
 
