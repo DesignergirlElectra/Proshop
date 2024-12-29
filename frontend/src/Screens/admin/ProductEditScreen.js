@@ -2,12 +2,12 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { Form, Button } from 'react-bootstrap'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { LinkContainer } from 'react-router-bootstrap'
-import { FaTimes, FaEdit, FaTrash } from 'react-icons/fa'
+// import { LinkContainer } from 'react-router-bootstrap'
+// import { FaTimes, FaEdit, FaTrash } from 'react-icons/fa'
 import Message from '../../Components/Message'
 import Loader from '../../Components/Loader'
 import { toast } from "react-toastify"
-import { useUpdateProductMutation, useGetProductDetailsQuery, useGetProductsQuery, useUploadProductImageMutation } from '../../Slices/productsApiSlice'
+import { useUpdateProductMutation, useGetProductDetailsQuery, useUploadProductImageMutation } from '../../Slices/productsApiSlice'
 import FormContainer from '../../Components/FormContainer'
 
 const ProductEditScreen = () => {
@@ -20,9 +20,9 @@ const ProductEditScreen = () => {
     const [countInStock, setCountInStock] = useState(0)
     const [category, setCategory] = useState('')
 
-    const { data: product, isLoading, error, refetch } = useGetProductDetailsQuery(productId)
+    const { data: product, isLoading, error} = useGetProductDetailsQuery(productId)
     const [updateProduct, { isLoading: loadingUpdate }] = useUpdateProductMutation()
-    const [uploadProductImage, { isLoading: loadingUpload }] = useUploadProductImageMutation()
+    const [uploadProductImage] = useUploadProductImageMutation()
     const navigate = useNavigate()
     useEffect(() => {
         if (product) {

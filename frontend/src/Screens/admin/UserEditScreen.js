@@ -33,7 +33,7 @@ const UserEditScreen = () => {
             await updateUser({ userId ,name ,email, isAdmin : isAdmin || false})
             toast.success('user updated successfully')
             refetch();
-            // navigate('/admin/userlist')
+            navigate('/admin/userlist')
         } catch (err) {
             toast.error(err?.data?.message || err.error)
         }

@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 import FormContainer from '../Components/FormContainer'
 import { Form, Col,FormCheck , Button} from 'react-bootstrap'
 import { CheckoutStep } from '../Components/CheckoutStep'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { savePaymentMethod } from '../Slices/cartSlice'
 
 
 const PaymentScreen = () => {
     const [paymentMethod, setPaymentMethod] = useState('PayPal')
-    const dispatch = useDispatch()
+    // const dispatch = useDispatch()
     const navigate = useNavigate()
     const cart = useSelector((state)=>state.cart)
     const shippingAddress = {cart}

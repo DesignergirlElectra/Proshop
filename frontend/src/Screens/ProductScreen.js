@@ -1,7 +1,7 @@
 // import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 // import products from '../products'
-import { Form, Col, ListGroup, Row, Image, Card, Button, ListGroupItem, FormGroup, FormLabel, FormControl } from 'react-bootstrap'
+import { Form, Col, ListGroup, Row, Image, Card, Button, ListGroupItem } from 'react-bootstrap'
 import Rating from '../Components/Rating'
 // import axios from 'axios'
 import { useCreateReviewsMutation, useGetProductDetailsQuery} from '../Slices/productsApiSlice'
